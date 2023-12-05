@@ -1,18 +1,10 @@
 #include <Arduino.h>
-
-// put function declarations here:
-int myFunction(int, int);
-
+#include "wifiManager.h"
+WifiManager* wifiManager = nullptr;
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  wifiManager = new WifiManager(new WebServer(80));
 }
-
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  wifiManager->server->handleClient();
+  delay(2);
 }
