@@ -1,18 +1,18 @@
 #include <Arduino.h>
+#include <string>
+#include "customUtils.h"
+#include "config.h"
 
-// put function declarations here:
-int myFunction(int, int);
+customUtils utils;
+String json;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial.begin(115200);
+  json = utils.getJSONFromURL("https://staging.revolvair.org/api/revolvair/stations/cegep-de-ste-foy/");//config::URL_REVOLVAIR
+  Serial.println(json);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  Serial.println("test2");
+  delay(10000);
 }
