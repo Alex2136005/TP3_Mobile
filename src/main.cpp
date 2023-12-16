@@ -6,8 +6,8 @@ WifiManager* wifiManager = nullptr;
 RevolvairWebServer* webServer = nullptr;
 
 void setup() {
-  const char* ssid = "BELL201";
-  const char* password = "alex1234";
+  const char* ssid = "Sly2021";
+  const char* password = "jeveuxduwifi";
 
   wifiManager = new WifiManager(ssid, password);
   webServer = new RevolvairWebServer(new WebServer(80));
