@@ -10,9 +10,13 @@ class RevolvairWebServer{
     RevolvairWebServer(WebServer* webserver);
     ~RevolvairWebServer();
     void initializeServer();
+    void setPM25(uint16_t pm_2_5);
 
     private:
     static const int led = 13;
+    String pm_2_5 = "VEILLEZ CONNECTER LE CAPTEUR DE PARTICULE";
     static void handleRoot();
     static void handleNotFound();
+    String updateHtmlContentPage1(String niveau, String description, String hexColor);
+    String updateHtmlContentPage2();
 };

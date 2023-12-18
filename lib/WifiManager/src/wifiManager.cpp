@@ -9,7 +9,6 @@ WifiManager::WifiManager(const char* STA_SSID, const char* STA_PW){
 
 void WifiManager::initializeConnexion()
 {
-
     pinMode(led, OUTPUT);
     digitalWrite(led, 0);
     Serial.begin(115200);
