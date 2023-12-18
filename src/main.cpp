@@ -64,5 +64,4 @@ void PMManager() {
   webServer->setPM25(data.PM_AE_UG_2_5);
   Serial.print("PM 2.5 (ug/m3): "); 
   Serial.println(data.PM_AE_UG_2_5);
-  Serial.println();
 }

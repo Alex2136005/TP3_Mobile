@@ -3,6 +3,11 @@
 #include "../../../src/config.h"
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#ifdef ESP32
+  #include <WiFi.h>
+#else
+  #include <ESP8266WiFi.h>
+#endif
 
 const int redPin = 12;
 const int greenPin = 13;
@@ -62,9 +67,15 @@ String RevolvairWebServer::updateHtmlContentPage1(String niveau, String descript
 }
 
 String RevolvairWebServer::updateHtmlContentPage2() {
+    byte mac[6];
+    WiFi.macAddress(mac);
+    //À VÉRIFIER
+    String uniqueId =  String(mac[0],HEX) +String(mac[1],HEX) +String(mac[2],HEX) +String(mac[3],HEX) + String(mac[4],HEX) + String(mac[5],HEX);
     String htmlContentPage2 = "<h1>Page Information de l'appareil</h1>";
-    htmlContentPage2 += "<p>Mac ID : {{data}}</p>";
-    htmlContentPage2 += " <p>Device Id : {{data}}</p>";
+    htmlContentPage2 += "<p>Mac ID : "+String(WiFi.macAddress())+"</p>";
+    htmlContentPage2 += "<p>Device Id : "+uniqueId+"</p>";
+    htmlContentPage2 += "<p>Wifi SSID : "+String(WiFi.SSID())+"</p>";
+    htmlContentPage2 += "<p>Wifi RSSI : "+String(WiFi.RSSI())+"</p>";
     htmlContentPage2 += "</body></html>";
 
     return htmlContentPage2;
