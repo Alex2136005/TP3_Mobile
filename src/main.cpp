@@ -20,6 +20,7 @@ void setup() {
   const char* ssid = config::WIFI_NAME;
   const char* password = config::WIFI_PASSWORD;
 
+
   wifiManager = new WifiManager(ssid, password);
   webServer = new RevolvairWebServer(new WebServer(80));
   wifiManager->initializeConnexion();
