@@ -3,6 +3,17 @@
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+#include "FS.h"
+#include "SPIFFS.h"
+#include "../../customUtils.h"
+#include "../../../src/config.h"
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#ifdef ESP32
+  #include <WiFi.h>
+#else
+  #include <ESP8266WiFi.h>
+#endif
 
 class RevolvairWebServer{
     public:
