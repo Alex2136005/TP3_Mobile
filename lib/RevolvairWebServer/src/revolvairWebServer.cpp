@@ -1,13 +1,5 @@
 #include "revolvairWebServer.h"
-#include "../../customUtils.h"
-#include "../../../src/config.h"
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
-#ifdef ESP32
-  #include <WiFi.h>
-#else
-  #include <ESP8266WiFi.h>
-#endif
+#define HTML_FILE_ERROR "<html><p>An error occured with the html file</p></html>"
 
 const int redPin = 12;
 const int greenPin = 13;
@@ -37,56 +29,70 @@ void RevolvairWebServer::handleNotFound(){
     digitalWrite(led, 0);
 }
 
+
 void RevolvairWebServer::handleRoot(){
     digitalWrite(led, 1);
-    String htmlContent = "<html><body>";
-    htmlContent += "<h1>Alexis Chatigny et Mathys Deshaies Web Server</h1>";
-    htmlContent += "<p><a href=\"/\">Page d'accueil</a></p>";
-    htmlContent += "<p><a href=\"/qualitedelair\">Page Qualité de l'air</a></p>";
-    htmlContent += "<p><a href=\"/informationdelappareil\">Page Information de l'appareil</a></p>";
-    htmlContent += "</body></html>";
+    File file = SPIFFS.open("/index.html", "r");
+    if (!file) 
+    {
+        Serial.println("Le fichier index.html est introuvable.");
+        return ;
+    }
 
-    server->send(200, "text/html", htmlContent);
-    //server->send(200, "text/plain", "hello from esp32!");
-    digitalWrite(led, 0);
+    String htmlContent = file.readString();
     
+    server->send(200, "text/html", htmlContent);
+    file.close();
+
+    digitalWrite(led, 0);
     pinMode(redPin, OUTPUT);
     pinMode(greenPin, OUTPUT);
     pinMode(bluePin, OUTPUT);
 }
 
 String RevolvairWebServer::updateHtmlContentPage1(String niveau, String description, String hexColor) {
-    String htmlContentPage1 = "<h1>Page Qualite de l'air</h1>";
-    htmlContentPage1 += "<p>PM 2.5 : "+this->pm_2_5+" μg/m³</p>";
-    htmlContentPage1 += "<p>Niveau : "+niveau+"</p>";
-    htmlContentPage1 += "<p>Description : "+description+"</p>";
-    htmlContentPage1 += "<p style='color: "+hexColor+";'>Couleur : "+hexColor+"</p>";
-    htmlContentPage1 += "</body></html>";
+    File file = SPIFFS.open("/airQuality.html", "r");
+    if (!file) 
+    {
+        Serial.println("Le fichier airQuality.html est introuvable.");
+        return HTML_FILE_ERROR;
+    }
+ 
+    String htmlContentPage1 = file.readString();
+    htmlContentPage1.replace("%PM_2_5%", String(pm_2_5));
+    htmlContentPage1.replace("%NIVEAU%", niveau);
+    htmlContentPage1.replace("%DESCRIPTION%", description);
+    htmlContentPage1.replace("%HEX_COLOR%", hexColor);
+    file.close();
 
     return htmlContentPage1;
 }
 
-String RevolvairWebServer::updateHtmlContentPage2() {
+String RevolvairWebServer::updateHtmlContentPage2() 
+{
     byte mac[6];
     WiFi.macAddress(mac);
-    //À VÉRIFIER
     String uniqueId =  String(mac[0],HEX) +String(mac[1],HEX) +String(mac[2],HEX) +String(mac[3],HEX) + String(mac[4],HEX) + String(mac[5],HEX);
-    String htmlContentPage2 = "<h1>Page Information de l'appareil</h1>";
-    htmlContentPage2 += "<p>Mac ID : "+String(WiFi.macAddress())+"</p>";
-    htmlContentPage2 += "<p>Device Id : "+uniqueId+"</p>";
-    htmlContentPage2 += "<p>Wifi SSID : "+String(WiFi.SSID())+"</p>";
-    htmlContentPage2 += "<p>Wifi RSSI : "+String(WiFi.RSSI())+"</p>";
-    htmlContentPage2 += "</body></html>";
+    File file = SPIFFS.open("/deviceInfo.html", "r");
+    if (!file) 
+    {
+        Serial.println("Le fichier deviceInfo.html est introuvable.");
+        return HTML_FILE_ERROR;
+    }
 
-    return htmlContentPage2;
+    String htmlContentPage2 = file.readString();
+    file.close();
+    htmlContentPage2.replace("%MAC_ADDRESS%", WiFi.macAddress());
+    htmlContentPage2.replace("%DEVICE_ID%", uniqueId);
+    htmlContentPage2.replace("%WIFI_SSID%", WiFi.SSID());
+    htmlContentPage2.replace("%WIFI_RSSI%", String(WiFi.RSSI()));
+
+    return htmlContentPage2;   
 }
+
 
 void RevolvairWebServer::initializeServer()
 {
-    // customUtils utils;
-    // String jsonString;
-
-    //Because getJSONFromURL not working except in main 
     HTTPClient http;
     http.begin("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
     http.addHeader("Accept", "application/json");
@@ -96,7 +102,6 @@ void RevolvairWebServer::initializeServer()
     String payload = http.getString();
     http.end();
 
-    //jsonString = utils.getJSONFromURL("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
     DynamicJsonDocument doc(4096);
 
     DeserializationError error = deserializeJson(doc, payload);

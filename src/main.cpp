@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <string>
-#include "config.h"
 #include "wifiManager.h"
 #include "../lib/RevolvairWebServer/src/revolvairWebServer.h"
-
+#include "FS.h"
+#include "SPIFFS.h"
 #include <PMS.h>
 PMS pms(Serial2);
 PMS::DATA data;
@@ -17,18 +17,24 @@ const long interval = 5000;
 void PMManager();
 
 void setup() {  
+
   const char* ssid = config::WIFI_NAME;
   const char* password = config::WIFI_PASSWORD;
-
-
-  wifiManager = new WifiManager(ssid, password);
-  webServer = new RevolvairWebServer(new WebServer(80));
-  wifiManager->initializeConnexion();
-  webServer->initializeServer();
   
   Serial.begin(115200);
   Serial2.begin(9600);
+
+    if(!SPIFFS.begin(true)){
+      Serial.println("SPIFFS Mount Failed");
+      return;
+    }
+
+    wifiManager = new WifiManager(ssid, password);
+    webServer = new RevolvairWebServer(new WebServer(80));
+    wifiManager->initializeConnexion();
+    webServer->initializeServer();
 }
+
 
 void loop() {
   if(wifiManager->isConnected()){
