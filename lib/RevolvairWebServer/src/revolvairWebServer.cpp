@@ -1,6 +1,7 @@
 #include "revolvairWebServer.h"
 #include "../../customUtils.h"
 #include "../../../src/config.h"
+#include "../../RGBLedManager/src/RGBLedManager.h"
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #ifdef ESP32
@@ -13,6 +14,7 @@ const int redPin = 12;
 const int greenPin = 13;
 const int bluePin = 14;
 uint8_t red, green, blue;
+RGBLedManager* ledManager = new RGBLedManager(redPin, greenPin, bluePin);
 
 WebServer* RevolvairWebServer::server = nullptr;
 RevolvairWebServer::RevolvairWebServer(WebServer* webserver){  
@@ -49,10 +51,6 @@ void RevolvairWebServer::handleRoot(){
     server->send(200, "text/html", htmlContent);
     //server->send(200, "text/plain", "hello from esp32!");
     digitalWrite(led, 0);
-    
-    pinMode(redPin, OUTPUT);
-    pinMode(greenPin, OUTPUT);
-    pinMode(bluePin, OUTPUT);
 }
 
 String RevolvairWebServer::updateHtmlContentPage1(String niveau, String description, String hexColor) {
@@ -67,13 +65,11 @@ String RevolvairWebServer::updateHtmlContentPage1(String niveau, String descript
 }
 
 String RevolvairWebServer::updateHtmlContentPage2() {
-    byte mac[6];
-    WiFi.macAddress(mac);
-    //À VÉRIFIER
-    String uniqueId =  String(mac[0],HEX) +String(mac[1],HEX) +String(mac[2],HEX) +String(mac[3],HEX) + String(mac[4],HEX) + String(mac[5],HEX);
     String htmlContentPage2 = "<h1>Page Information de l'appareil</h1>";
     htmlContentPage2 += "<p>Mac ID : "+String(WiFi.macAddress())+"</p>";
-    htmlContentPage2 += "<p>Device Id : "+uniqueId+"</p>";
+    //À VÉRIFIER
+    htmlContentPage2 += "<p>Device Id : "+String(ESP.getEfuseMac())+"</p>";
+    //
     htmlContentPage2 += "<p>Wifi SSID : "+String(WiFi.SSID())+"</p>";
     htmlContentPage2 += "<p>Wifi RSSI : "+String(WiFi.RSSI())+"</p>";
     htmlContentPage2 += "</body></html>";
@@ -83,10 +79,8 @@ String RevolvairWebServer::updateHtmlContentPage2() {
 
 void RevolvairWebServer::initializeServer()
 {
-    // customUtils utils;
-    // String jsonString;
-
     //Because getJSONFromURL not working except in main 
+    //--TROUVER SOLUTION--
     HTTPClient http;
     http.begin("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
     http.addHeader("Accept", "application/json");
@@ -107,7 +101,7 @@ void RevolvairWebServer::initializeServer()
     }
 
     //Change la lumière selon le value de la qualité d'aire (aqhi)
-    int value = 52;
+    int value = 110;
     String niveau = "";
     String description = "";
     String hexColor = "#ffffff";
@@ -120,21 +114,12 @@ void RevolvairWebServer::initializeServer()
             break;
         }
     }
-    Serial.println(hexColor);
-    //...
+    Serial.println("Mac ID : "+String(WiFi.macAddress()));
+    Serial.println("Wifi SSID : "+String(WiFi.SSID()));
+    Serial.println("Wifi RSSI : "+String(WiFi.RSSI()));
+    Serial.println("Device Id : "+String(ESP.getEfuseMac()));
+    ledManager->setLed(String(hexColor.c_str()));
 
-    //tout mettre dans RGBLedManager...
-    long number;
-    if(hexColor[0] == '#')  number = strtol(&hexColor[1], nullptr, 16);
-    else number = strtol(&hexColor[0], nullptr, 16);
-    red = number >> 16;
-    green = number >> 8 & 0xFF;
-    blue = number & 0xFF;
-    analogWrite(redPin, red);
-    analogWrite(greenPin, green);
-    analogWrite(bluePin, blue);
-
-    //---------
     String htmlContentNav = "<html><body><p> >> <a href=\"/\">Page d'accueil</a></p>";
     htmlContentNav += "<p> >> <a href=\"/qualitedelair\">Page Qualite de l'air</a></p>";
     htmlContentNav += "<p> >> <a href=\"/informationdelappareil\">Page Information de l'appareil</a></p>";

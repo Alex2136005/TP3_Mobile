@@ -9,6 +9,7 @@ using namespace std;
 class customUtils {
     public:
     String getJSONFromURL(const string url) const;
+    //String postJSON(const string url) const;
 
     private:
 };

@@ -1,15 +1,16 @@
+#include <Arduino.h>
 #include <string>
 
 using namespace std;
 
-class REGBLedManager {
+class RGBLedManager {
     public:
-    RevolvairWebServer(int redPin, int greenPin, int bluePin);
-    void setLed(String hexColor) const;
+    RGBLedManager(int redPin, int greenPin, int bluePin);
+    void setLed(String hexColor);
 
     private:
-    const int redPin;
-    const int greenPin;
-    const int bluePin;
+    int redPin;
+    int greenPin;
+    int bluePin;
     uint8_t red, green, blue;
 };

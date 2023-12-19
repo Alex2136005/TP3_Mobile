@@ -9,7 +9,7 @@ RGBLedManager::RGBLedManager(int redPin, int greenPin, int bluePin){
     pinMode(bluePin, OUTPUT);
 }
 
-void RGBLedManager::setLed(string hexColor) const {
+void RGBLedManager::setLed(String hexColor) {
     long number;
     if(hexColor[0] == '#')  number = strtol(&hexColor[1], nullptr, 16);
     else number = strtol(&hexColor[0], nullptr, 16);
