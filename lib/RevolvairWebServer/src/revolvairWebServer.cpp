@@ -1,5 +1,4 @@
 #include "revolvairWebServer.h"
-#define HTML_FILE_ERROR "<html><p>An error occured with the html file</p></html>"
 
 const int redPin = 12;
 const int greenPin = 13;
@@ -55,7 +54,7 @@ String RevolvairWebServer::updateHtmlContentPage1(String niveau, String descript
     if (!file) 
     {
         Serial.println("Le fichier airQuality.html est introuvable.");
-        return HTML_FILE_ERROR;
+        return "<html>Une erreur est survenue avec le fichier demandé.</html>";
     }
  
     String htmlContentPage1 = file.readString();
@@ -77,7 +76,7 @@ String RevolvairWebServer::updateHtmlContentPage2()
     if (!file) 
     {
         Serial.println("Le fichier deviceInfo.html est introuvable.");
-        return HTML_FILE_ERROR;
+        return "<html>Une erreur est survenue avec le fichier demandé.</html>";
     }
 
     String htmlContentPage2 = file.readString();
@@ -139,10 +138,14 @@ void RevolvairWebServer::initializeServer()
     analogWrite(greenPin, green);
     analogWrite(bluePin, blue);
 
-    //---------
-    String htmlContentNav = "<html><body><p> >> <a href=\"/\">Page d'accueil</a></p>";
-    htmlContentNav += "<p> >> <a href=\"/qualitedelair\">Page Qualite de l'air</a></p>";
-    htmlContentNav += "<p> >> <a href=\"/informationdelappareil\">Page Information de l'appareil</a></p>";
+    File file = SPIFFS.open("/navbar.html", "r");
+    if (!file) 
+    {
+        Serial.println("Le fichier navbar.html est introuvable.");
+        return ;
+    }
+
+    String htmlContentNav = file.readString();
 
     server->on("/", handleRoot);
     server->on("/qualitedelair", HTTP_GET, [this, htmlContentNav, niveau, description, hexColor](){

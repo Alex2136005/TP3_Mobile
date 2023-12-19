@@ -9,17 +9,25 @@ WifiManager::WifiManager(const char* STA_SSID, const char* STA_PW){
 
 void WifiManager::initializeConnexion()
 {
-    pinMode(led, OUTPUT);
-    digitalWrite(led, 0);
-    Serial.begin(115200);
     WiFi.mode(WIFI_STA);
-    WiFi.begin(this->SSID, this->PASSWORD);
-    Serial.println("");
-    // Wait for connection
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
+    long lastAttemptDelay = 0;
+
+    while (WiFi.status() != WL_CONNECTED) 
+    {
+        WiFi.begin(this->SSID, this->PASSWORD);
+        Serial.println();
+        while (WiFi.status() != WL_CONNECTED) 
+        {
+            delay(500);
+            Serial.print(".");
+            lastAttemptDelay += 500;
+            if(lastAttemptDelay >= this->WIFI_CONNEXION_ATTEMPT_DELAY)
+                break;
+        }
+        Serial.println("Le Wi-Fi n'a pas pu se connecter. Une nouvelle tentative est en cour.");
+        lastAttemptDelay = 0;
     }
+    
     Serial.println("");
     Serial.print("Connected to ");
     Serial.println(this->SSID);

@@ -5,11 +5,13 @@
 #include "FS.h"
 #include "SPIFFS.h"
 #include <PMS.h>
+#include "PMSReader.h"
 PMS pms(Serial2);
 PMS::DATA data;
 
 WifiManager* wifiManager = nullptr;
 RevolvairWebServer* webServer = nullptr;
+PMSReader* pmsReader = nullptr;
 
 unsigned long previousMillis = 0;
 const long interval = 5000;
@@ -28,7 +30,7 @@ void setup() {
       Serial.println("SPIFFS Mount Failed");
       return;
     }
-
+    pmsReader = new PMSReader();
     wifiManager = new WifiManager(ssid, password);
     webServer = new RevolvairWebServer(new WebServer(80));
     wifiManager->initializeConnexion();

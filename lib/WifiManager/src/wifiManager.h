@@ -11,4 +11,6 @@ class WifiManager
         const int led = 13;
         const char* SSID ;
         const char* PASSWORD;
+        const float WIFI_CONNEXION_ATTEMPT_DELAY = 10000;
+
 };
