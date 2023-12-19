@@ -1,11 +1,12 @@
 #include <PMS.h>
-#include <string>
 #include <Arduino.h>
+
 class PMSReader
 {
     private:
+        PMS* pms;
     public:
-        PMSReader();
-        uint16_t getCurrentAirQualityReading();
-
+        PMSReader(PMS& pms);
+        ~PMSReader();
+        uint16_t getCurrentAirQualityReading(PMS::DATA& data);
 };
