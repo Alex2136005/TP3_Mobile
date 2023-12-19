@@ -1,6 +1,6 @@
 #include "PMSReader.h"
-PMS pms(Serial2);
-PMS::DATA data;
+extern PMS pms;
+extern PMS::DATA data;
 PMSReader::PMSReader()
 {
 }
