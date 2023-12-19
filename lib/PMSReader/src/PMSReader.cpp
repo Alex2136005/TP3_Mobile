@@ -1,16 +1,18 @@
 #include "PMSReader.h"
-extern PMS pms;
-extern PMS::DATA data;
-PMSReader::PMSReader()
-{
+
+PMSReader::PMSReader(PMS& pms) {
+    this->pms = &pms;
 }
-uint16_t PMSReader::getCurrentAirQualityReading()
+PMSReader::~PMSReader(){}
+
+
+uint16_t PMSReader::getCurrentAirQualityReading( PMS::DATA& data )
 {
-    if (pms.read(data))
+    if (pms->read(data))
     {
         return data.PM_AE_UG_2_5;
     }
-    throw std::runtime_error("Failed to read air quality data");
+    return std::numeric_limits<uint16_t>::max();
 }
 
 

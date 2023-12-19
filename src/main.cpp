@@ -14,9 +14,8 @@ RevolvairWebServer* webServer = nullptr;
 PMSReader* pmsReader = nullptr;
 
 unsigned long previousMillis = 0;
-const long interval = 5000;
+const long interval = 1000;
 
-void PMManager();
 
 void setup() {  
 
@@ -30,7 +29,7 @@ void setup() {
       Serial.println("SPIFFS Mount Failed");
       return;
     }
-    pmsReader = new PMSReader();
+    pmsReader = new PMSReader(pms);
     wifiManager = new WifiManager(ssid, password);
     webServer = new RevolvairWebServer(new WebServer(80));
     wifiManager->initializeConnexion();
@@ -46,31 +45,15 @@ void loop() {
   {
     wifiManager->initializeConnexion();
   }
-  //Appelé tout les 5 seconds
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
-    if (pms.read(data))
+    uint16_t result = pmsReader->getCurrentAirQualityReading(data);
+    if(result != std::numeric_limits<uint16_t>::max())
     {
+      webServer->setPM25(data.PM_AE_UG_2_5);
       previousMillis = currentMillis;
-      PMManager();
+      Serial.println("PM 2.5 (ug/m3):" + String(data.PM_AE_UG_2_5) ); 
     }
   }
-  // if (pms.read(data))
-  // {
-  //   Serial.print("PM 1.0 (ug/m3): ");
-  //   Serial.println(data.PM_AE_UG_1_0);
-  //   Serial.print("PM 2.5 (ug/m3): "); 
-  //   Serial.println(data.PM_AE_UG_2_5);
-  //   Serial.print("PM 10.0 (ug/m3): ");
-  //   Serial.println(data.PM_AE_UG_10_0);
-  //   Serial.println();
-  // }
   delay(2);
-}
-
-void PMManager() {
-  //gestion du capteur qualité d'aire
-  webServer->setPM25(data.PM_AE_UG_2_5);
-  Serial.print("PM 2.5 (ug/m3): "); 
-  Serial.println(data.PM_AE_UG_2_5);
 }
