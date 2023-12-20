@@ -10,6 +10,7 @@ void RevolvairAPI::postJSON(String& encodedJSON)
     http.addHeader("Content-Type", "application/json");
     http.addHeader("Authorization", "Bearer " + String(config::API_TOKEN));
     int httpCode = http.POST(encodedJSON);
+    Serial.println(encodedJSON);
     String payload = http.getString();
     Serial.println(httpCode);
     Serial.println(payload);
@@ -43,10 +44,11 @@ void RevolvairAPI::sendPM25Data(String value)
 {
   DynamicJsonDocument doc(1024);
   doc["esp8266id"] = WifiManager::getUniqueId();
+  doc["PMS_P0"]  = value;
+  doc["PMS_P1"]  = value;
   doc["PMS_P2"]  = value;
   doc["signal"]   = WifiManager::getWifiRSSI();
   String jsonPm25Package = "";
   serializeJson(doc, jsonPm25Package);
-  Serial.println(jsonPm25Package);
   postJSON(jsonPm25Package);  
 }
