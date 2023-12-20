@@ -1,13 +1,4 @@
 #include "revolvairWebServer.h"
-#include "../../customUtils.h"
-#include "../../../src/config.h"
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
-#ifdef ESP32
-  #include <WiFi.h>
-#else
-  #include <ESP8266WiFi.h>
-#endif
 
 const int redPin = 12;
 const int greenPin = 13;

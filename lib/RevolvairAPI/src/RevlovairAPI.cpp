@@ -2,19 +2,6 @@
 
 RevolvairAPI::RevolvairAPI(){}
 
-void RevolvairAPI::postJSON(String& encodedJSON) 
-{
-    HTTPClient http;
-    http.begin(config::API_POST_URL);
-    http.addHeader("Accept", "application/json");
-    http.addHeader("Content-Type", "application/json");
-    http.addHeader("Authorization", "Bearer " + String(config::API_TOKEN));
-    int httpCode = http.POST(encodedJSON);
-    String payload = http.getString();
-    Serial.println(httpCode);
-    Serial.println(payload);
-    http.end();
-}
 
 String RevolvairAPI::getJSONFromURL(const string url) const 
 {
@@ -39,14 +26,36 @@ String RevolvairAPI::getJSONFromURL(const string url) const
     return payload;
 }
 
-void RevolvairAPI::sendPM25Data(String value)
+void RevolvairAPI::postJSON(String& encodedJSON) 
 {
-  DynamicJsonDocument doc(1024);
-  doc["esp8266id"] = WifiManager::getUniqueId();
-  doc["PMS_P2"]  = value;
-  doc["signal"]   = WifiManager::getWifiRSSI();
-  String jsonPm25Package = "";
-  serializeJson(doc, jsonPm25Package);
-  Serial.println(jsonPm25Package);
-  postJSON(jsonPm25Package);  
+    HTTPClient http;
+    http.begin(config::API_POST_URL); //Ces infos sont hardcodé état donné que les post fonctionnent avec la machine d'un seul membre de l'équipe.
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("x-mac-id", "esp32-083AF2B914C0");
+    http.addHeader("x-device-id", "211195251538440");
+    int httpCode = http.POST(encodedJSON);
+    String payload = http.getString();
+    Serial.println(httpCode);
+    Serial.println(payload);
+    http.end();
+}
+
+
+void RevolvairAPI::sendPM25Data(String valueP1, String valueP10, String valueP2_5)
+{
+    DynamicJsonDocument doc(1024);
+    doc["esp8266id"] = "211195251538440";
+    doc["software_version"] = "Revo-2023-v1";
+    doc["sensordatavalues"][0]["value_type"] = "PMS_P0"; 
+    doc["sensordatavalues"][0]["value"] = valueP1; 
+    doc["sensordatavalues"][1]["value_type"] = "PMS_P1"; 
+    doc["sensordatavalues"][1]["value"] = valueP10;
+    doc["sensordatavalues"][2]["value_type"] = "PMS_P2"; 
+    doc["sensordatavalues"][2]["value"] = valueP2_5 ;
+    doc["sensordatavalues"][2]["value_type"] = "signal"; 
+    doc["sensordatavalues"][2]["value"] = WifiManager::getWifiRSSI(); 
+    String jsonPm25Package = "";
+    serializeJson(doc, jsonPm25Package);
+    Serial.println(jsonPm25Package);
+    postJSON(jsonPm25Package);  
 }
