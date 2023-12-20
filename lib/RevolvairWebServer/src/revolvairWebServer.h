@@ -1,11 +1,11 @@
 #include <WebServer.h>
-#include <WebServer.h>
 #include <ESPmDNS.h>
 #include "../../RevolvairAPI/src/RevlovairAPI.h"
-#include <HTTPClient.h>
 #include <ArduinoJson.h>
 #include "FlashFileReader.h"
-
+#include "../../customUtils.h"
+#include <HTTPClient.h>
+#include "../../RGBLedManager/src/RGBLedManager.h"
 class RevolvairWebServer{
     public:
     static WebServer* server;
