@@ -40,7 +40,6 @@ void RevolvairAPI::postJSON(String& encodedJSON)
     http.end();
 }
 
-
 void RevolvairAPI::sendPM25Data(String valueP1, String valueP10, String valueP2_5)
 {
     DynamicJsonDocument doc(1024);
