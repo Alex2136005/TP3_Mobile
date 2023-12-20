@@ -25,4 +25,5 @@ class RevolvairWebServer{
     String updateHtmlContentPage1();
     String updateHtmlContentPage2();
     void updateValues();
+    void handleUpdateRequest();
 };
