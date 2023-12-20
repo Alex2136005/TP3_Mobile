@@ -29,7 +29,7 @@ String RevolvairAPI::getJSONFromURL(const string url) const
 void RevolvairAPI::postJSON(String& encodedJSON) 
 {
     HTTPClient http;
-    http.begin(config::API_POST_URL); //Ces infos sont hardcodé état donné que les post fonctionnent avec la machine d'un seul membre de l'équipe.
+    http.begin(config::API_POST_URL); //Ces infos sont hardcodés état donné que les post fonctionnent avec la machine d'un seul membre de l'équipe.
     http.addHeader("Content-Type", "application/json");
     http.addHeader("x-mac-id", "esp32-083AF2B914C0");
     http.addHeader("x-device-id", "211195251538440");
