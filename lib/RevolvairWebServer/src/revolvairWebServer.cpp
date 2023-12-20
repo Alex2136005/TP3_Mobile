@@ -10,13 +10,14 @@ WebServer* RevolvairWebServer::server = nullptr;
 FlashFileReader* RevolvairWebServer::fileReader = nullptr;
 RevolvairWebServer::RevolvairWebServer(WebServer* webserver)
 {  
+    
     this->fileReader = new FlashFileReader();
     this->server = webserver;
-    this->aqhiScale = new AQHIScale();
-    Serial2.begin(9600);
+    this->api = new RevolvairAPI();
 }
 
-void RevolvairWebServer::handleNotFound(){
+void RevolvairWebServer::handleNotFound()
+{
     digitalWrite(led, 1);
     String message = "File Not Found\n\n";
     message += "URI: ";
@@ -84,6 +85,20 @@ String RevolvairWebServer::updateHtmlContentPage2()
 
 void RevolvairWebServer::initializeServer()
 {
+
+    DynamicJsonDocument temp(4096);
+    String payload = api->getJSONFromURL("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
+    DeserializationError error = deserializeJson(temp, payload);
+    if (error) {
+        Serial.print("Error parsing JSON: ");
+        Serial.println(error.c_str());
+        return;
+    }else
+    {
+        this->aqhiScale = new AQHIScale(temp);
+        Serial2.begin(9600);
+    }
+
     Serial.println("Mac ID : "+String(WiFi.macAddress()));
     Serial.println("Wifi SSID : "+String(WiFi.SSID()));
     Serial.println("Wifi RSSI : "+String(WiFi.RSSI()));

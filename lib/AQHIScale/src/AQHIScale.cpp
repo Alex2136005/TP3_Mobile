@@ -1,31 +1,20 @@
 #include "AQHIScale.h"
 
 DynamicJsonDocument AQHIScale::rangeJson(4096);
-AQHIScale::AQHIScale()
+AQHIScale::AQHIScale(DynamicJsonDocument ranges)
 {
+    String jsonString;
+    serializeJson(ranges, jsonString);
+    Serial.println(jsonString);    
     this->api = new RevolvairAPI();
     this->level = "";
+    this->rangeJson = ranges;
     this->description = "";
     this->hexColor = "";
 }
 
-void AQHIScale::initialize()
-{
-    String payload = api->getJSONFromURL("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
-    DeserializationError error = deserializeJson(rangeJson, payload);
-    if (error) {
-        Serial.print("Error parsing JSON: ");
-        Serial.println(error.c_str());
-        return;
-    }
-
-}
 void AQHIScale::updateInfos(String pm_2_5)
 {
-    if(!this->initialized){
-        initialize();
-        this->initialized = true;
-    }
     this->scanResult = String(pm_2_5);
     for (int i = 0; i < rangeJson["ranges"].size(); ++i)
     {
@@ -43,9 +32,10 @@ String AQHIScale::getLastScanResult(){
 }
 String AQHIScale::getAqiEpaLabelFromPM25(uint16_t pm_2_5)
 {
+
     for (int i = 0; i < rangeJson["ranges"].size(); ++i)
     {
-        if (pm_2_5 < rangeJson["ranges"][i]["max"]) 
+        if (String(pm_2_5).toInt() < rangeJson["ranges"][i]["max"]) 
         {
             return rangeJson["ranges"][i]["label"].as<String>();
         }

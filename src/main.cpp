@@ -3,7 +3,7 @@
 #include "../lib/RevolvairWebServer/src/revolvairWebServer.h"
 #include <PMS.h>
 #include "PMSReader.h"
-#include <WifiManager.h>
+//#include <WifiManager.h>
 PMS pms(Serial2);
 PMS::DATA data;
 
@@ -65,9 +65,9 @@ void loop()
       webServer->updateData(data.PM_AE_UG_2_5);
       lastScanResult = scanResult;
       previousMillis = currentMillis;
-      Serial.println("PM 1 (μg/m3):" + String(data.PM_SP_UG_1_0) );
+      Serial.println("\nPM 1 (μg/m3):" + String(data.PM_SP_UG_1_0) );
       Serial.println("PM 2.5 (μg/m3):" + String(data.PM_AE_UG_2_5) ); 
-      Serial.println("PM 10 (μg/m3):" + String(data.PM_AE_UG_10_0) );
+      Serial.println("PM 10 (μg/m3):" + String(data.PM_AE_UG_10_0) + '\n' );
     }
   }
 
