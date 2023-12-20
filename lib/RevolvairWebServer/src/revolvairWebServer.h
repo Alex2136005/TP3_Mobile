@@ -29,6 +29,3 @@ private:
 };
 
 #endif // REVOLVAIR_WEBSERVER_H
-
-};
-
