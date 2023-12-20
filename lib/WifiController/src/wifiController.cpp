@@ -1,9 +1,10 @@
 #include "wifiController.h"
+//#include <WiFiManager.h>
+
 WifiController::WifiController(const char* STA_SSID, const char* STA_PW){  
     this->SSID = STA_SSID;
     this->PASSWORD = STA_PW;
 };
-
 
 String WifiController::getMacAddress() 
 {
@@ -29,6 +30,16 @@ void WifiController::initializeConnexion()
 
     while (WiFi.status() != WL_CONNECTED) 
     {
+        /*WiFiManager wm;
+        //Enlevé la lign en production
+        wm.resetSettings();
+        bool res;
+        res = wm.autoConnect("AutoConnectAP","password");
+        if(!res) {
+            Serial.println("Failed to connect");
+            // ESP.restart();
+        } 
+*/
         WiFi.begin(this->SSID, this->PASSWORD);
         Serial.println();
         while (WiFi.status() != WL_CONNECTED) 

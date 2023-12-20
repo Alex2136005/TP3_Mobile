@@ -3,7 +3,6 @@
 #include "../lib/RevolvairWebServer/src/revolvairWebServer.h"
 #include <PMS.h>
 #include "PMSReader.h"
-#include <WifiManager.h>
 PMS pms(Serial2);
 PMS::DATA data;
 
@@ -19,19 +18,6 @@ const long dataSendingDelay = 120000;
 uint16_t lastScanResult = 0;
 
 void setup() {  
-  //WiFiManager TEST
-  /*WiFi.mode(WIFI_STA);
-  WifiController wm;
-  vm.resetSettings();
-  bool res;
-  res = wm.autoConnect("AutoConnectAP", "password");
-  if(!res) {
-    Serial.println("Failed to connect");
-  }
-  else {
-    Serial.println("connected...yeey :)");
-  }*/
-  //------
   const char* ssid = config::WIFI_NAME;
   const char* password = config::WIFI_PASSWORD;
   Serial.begin(115200);
