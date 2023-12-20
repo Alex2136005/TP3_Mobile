@@ -1,18 +1,22 @@
 #include <WebServer.h>
-#include <WiFi.h>
-#include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+#include "../../RevolvairAPI/src/RevlovairAPI.h"
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include "FlashFileReader.h"
 
 class RevolvairWebServer{
     public:
     static WebServer* server;
+    static FlashFileReader* fileReader;
     RevolvairWebServer(WebServer* webserver);
     ~RevolvairWebServer();
     void initializeServer();
     void setPM25(uint16_t pm_2_5);
 
     private:
+    RevolvairAPI* api;
     static const int led = 13;
     String pm_2_5 = "VEILLEZ CONNECTER LE CAPTEUR DE PARTICULE";
     static void handleRoot();

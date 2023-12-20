@@ -1,35 +1,41 @@
 #include <Arduino.h>
 #include <string>
-#include "config.h"
-#include "wifiManager.h"
 #include "../lib/RevolvairWebServer/src/revolvairWebServer.h"
-
 #include <PMS.h>
+#include "PMSReader.h"
 PMS pms(Serial2);
 PMS::DATA data;
 
 WifiManager* wifiManager = nullptr;
 RevolvairWebServer* webServer = nullptr;
+PMSReader* pmsReader = nullptr;
+RevolvairAPI* api = nullptr;
 
 unsigned long previousMillis = 0;
-const long interval = 5000;
+const long airScanDelay = 1000;
+const long dataSendingDelay = 10000;
 
-void PMManager();
+uint16_t lastScanResult = 0;
 
 void setup() {  
+
   const char* ssid = config::WIFI_NAME;
   const char* password = config::WIFI_PASSWORD;
-
-  wifiManager = new WifiManager(ssid, password);
-  webServer = new RevolvairWebServer(new WebServer(80));
-  wifiManager->initializeConnexion();
-  webServer->initializeServer();
   
   Serial.begin(115200);
   Serial2.begin(9600);
+
+    pmsReader = new PMSReader(pms);
+    wifiManager = new WifiManager(ssid, password);
+    webServer = new RevolvairWebServer(new WebServer(80));
+    api = new RevolvairAPI();
+    wifiManager->initializeConnexion();
+    webServer->initializeServer();
 }
 
-void loop() {
+
+void loop() 
+{
   if(wifiManager->isConnected()){
     webServer->server->handleClient();
   }
@@ -37,31 +43,28 @@ void loop() {
   {
     wifiManager->initializeConnexion();
   }
-  //Appelé tout les 5 seconds
+
   unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
-    if (pms.read(data))
+  if (currentMillis - previousMillis >= airScanDelay) 
+  {
+    uint16_t scanResult = pmsReader->getCurrentAirQualityReading(data);
+    if(scanResult != std::numeric_limits<uint16_t>::max())
     {
+      webServer->setPM25(data.PM_AE_UG_2_5);
+      lastScanResult = scanResult;
       previousMillis = currentMillis;
-      PMManager();
+      Serial.println("PM 2.5 (ug/m3):" + String(data.PM_AE_UG_2_5) ); 
     }
   }
-  // if (pms.read(data))
-  // {
-  //   Serial.print("PM 1.0 (ug/m3): ");
-  //   Serial.println(data.PM_AE_UG_1_0);
-  //   Serial.print("PM 2.5 (ug/m3): "); 
-  //   Serial.println(data.PM_AE_UG_2_5);
-  //   Serial.print("PM 10.0 (ug/m3): ");
-  //   Serial.println(data.PM_AE_UG_10_0);
-  //   Serial.println();
-  // }
-  delay(2);
-}
 
-void PMManager() {
-  //gestion du capteur qualité d'aire
-  webServer->setPM25(data.PM_AE_UG_2_5);
-  Serial.print("PM 2.5 (ug/m3): "); 
-  Serial.println(data.PM_AE_UG_2_5);
+  static unsigned long lastDataSendingMillis = 0;
+   if (currentMillis - lastDataSendingMillis >= dataSendingDelay) 
+   {
+    Serial.println("Sending data to API");
+    api->sendPM25Data(String(lastScanResult));
+    lastDataSendingMillis = currentMillis;
+  }
+
+
+  delay(2);
 }

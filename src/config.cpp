@@ -2,5 +2,7 @@
 
 const std::string config::URL_REVOLVAIR = "https://staging.revolvair.org/api/revolvair/stations/cegep-de-ste-foy/";
 const std::string config::URL_AQHI = "https://staging.revolvair.org/api/revolvair/aqi/aqhi";
-const char* config::WIFI_NAME = "Sly2021";
-const char* config::WIFI_PASSWORD = "jeveuxduwifi";
+const char* config::WIFI_NAME = "BELL201";
+const char* config::WIFI_PASSWORD = "alex123456";
+const char* config::API_POST_URL = "https://staging.revolvair.org/revolvair/stations/123456";
+const char* config::API_TOKEN  = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNGJmMTYxZmQyMTEyN2NhNDA3ZjVhODljYjMyMWNhYmRjYmQ3YWU4MjkxYWJjY2NkMWEzZmYwZTY4ZTljMzM0MGI1NzQ4M2IxZjY4ZjU5ZmUiLCJpYXQiOjE2OTg0MzAzNjAsIm5iZiI6MTY5ODQzMDM2MCwiZXhwIjoxNzMwMDUyNzYwLCJzdWIiOiI0MTAiLCJzY29wZXMiOltdfQ.fdcU0C4Jr0Jj6O1VxI6kRv9EspD9gvzBaGhEalyO3GM3Na5SJ84XOPAd2KOQp9fvnEI8rhrjahk2QIBrPcEw-rGx_-vjzL_KngFyOQChOWet-CpFLXMsEyq4CsskcibwvukAS-QW8ABsXyWYSR638BCzePUDY6Gw72Loa0Ss9IzlhGm9OiIpsgYBLRzWaSxNNQI3-r3JDFOkTqzn8NNIyDf7P3PS1cmQ2qNVlYJLmnPWXbGhwMXcytr_F-n-eotB2sknvkTmvIlPjEGbMLUg6U91scGGnTjusZpl4YO2LSnlxqz5k1Cf2Hpz__mEPvIdAo9xQObiLxNysQT9-MpEZH8dW6Pa5VTwhpdITONeTwj2VIyfmzm4bnVKOxPaCvmlWsDEc-8qDlyd4SQJ92ohBD3Cq76EaD4PnhhqsXeIlHtwTe4wiLo2nrghFlJWrKG1geX8WSFjigQXt5iMZpxD6XsvsrZ7d1SOX5zNxgl_HawRF9GR0YJ4CuSFuA5cKpOP1d8EhON5n6Ndne1lu48NAZBTHoi-G3K8VE-1_poyiqbPQ4Id5pvuIl1vTmYuo1z2KJI-4WmN3Qpdr6LawHhYr4TPBBPShN6BvoUBCjNGb3Sw4Mb8CWBOHHaL44Qo2vOFPRCzvPzQ1UWuf6ZgMb0raoKTuPRLNxnCa45w19bZaho";

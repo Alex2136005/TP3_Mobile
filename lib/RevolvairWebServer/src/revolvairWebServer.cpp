@@ -1,7 +1,6 @@
 #include "revolvairWebServer.h"
 #include "../../customUtils.h"
 #include "../../../src/config.h"
-#include "../../RGBLedManager/src/RGBLedManager.h"
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 #ifdef ESP32
@@ -17,9 +16,13 @@ uint8_t red, green, blue;
 RGBLedManager* ledManager = new RGBLedManager(redPin, greenPin, bluePin);
 
 WebServer* RevolvairWebServer::server = nullptr;
-RevolvairWebServer::RevolvairWebServer(WebServer* webserver){  
+FlashFileReader* RevolvairWebServer::fileReader = nullptr;
+RevolvairWebServer::RevolvairWebServer(WebServer* webserver)
+{  
+    this->fileReader = new FlashFileReader();
     this->server = webserver;
     Serial2.begin(9600);
+    api = new RevolvairAPI();
 }
 
 void RevolvairWebServer::handleNotFound(){
@@ -39,17 +42,17 @@ void RevolvairWebServer::handleNotFound(){
     digitalWrite(led, 0);
 }
 
+
 void RevolvairWebServer::handleRoot(){
     digitalWrite(led, 1);
-    String htmlContent = "<html><body>";
-    htmlContent += "<h1>Alexis Chatigny et Mathys Deshaies Web Server</h1>";
-    htmlContent += "<p><a href=\"/\">Page d'accueil</a></p>";
-    htmlContent += "<p><a href=\"/qualitedelair\">Page Qualité de l'air</a></p>";
-    htmlContent += "<p><a href=\"/informationdelappareil\">Page Information de l'appareil</a></p>";
-    htmlContent += "</body></html>";
+    try 
+    {
+        String htmlContent = fileReader->getFileByName("index.html");
+        server->send(200, "text/html", htmlContent);
+    } catch (const std::runtime_error& e) {
+        Serial.println("Exception: " + String(e.what()));
+    }
 
-    server->send(200, "text/html", htmlContent);
-    //server->send(200, "text/plain", "hello from esp32!");
     digitalWrite(led, 0);
 }
 
@@ -65,11 +68,13 @@ String RevolvairWebServer::updateHtmlContentPage1(String niveau, String descript
 }
 
 String RevolvairWebServer::updateHtmlContentPage2() {
+    byte mac[6];
+    WiFi.macAddress(mac);
+    //À VÉRIFIER
+    String uniqueId =  String(mac[0],HEX) +String(mac[1],HEX) +String(mac[2],HEX) +String(mac[3],HEX) + String(mac[4],HEX) + String(mac[5],HEX);
     String htmlContentPage2 = "<h1>Page Information de l'appareil</h1>";
     htmlContentPage2 += "<p>Mac ID : "+String(WiFi.macAddress())+"</p>";
-    //À VÉRIFIER
-    htmlContentPage2 += "<p>Device Id : "+String(ESP.getEfuseMac())+"</p>";
-    //
+    htmlContentPage2 += "<p>Device Id : "+uniqueId+"</p>";
     htmlContentPage2 += "<p>Wifi SSID : "+String(WiFi.SSID())+"</p>";
     htmlContentPage2 += "<p>Wifi RSSI : "+String(WiFi.RSSI())+"</p>";
     htmlContentPage2 += "</body></html>";
@@ -79,8 +84,10 @@ String RevolvairWebServer::updateHtmlContentPage2() {
 
 void RevolvairWebServer::initializeServer()
 {
+    // customUtils utils;
+    // String jsonString;
+
     //Because getJSONFromURL not working except in main 
-    //--TROUVER SOLUTION--
     HTTPClient http;
     http.begin("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
     http.addHeader("Accept", "application/json");
@@ -90,7 +97,6 @@ void RevolvairWebServer::initializeServer()
     String payload = http.getString();
     http.end();
 
-    //jsonString = utils.getJSONFromURL("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
     DynamicJsonDocument doc(4096);
 
     DeserializationError error = deserializeJson(doc, payload);
@@ -114,12 +120,21 @@ void RevolvairWebServer::initializeServer()
             break;
         }
     }
-    Serial.println("Mac ID : "+String(WiFi.macAddress()));
-    Serial.println("Wifi SSID : "+String(WiFi.SSID()));
-    Serial.println("Wifi RSSI : "+String(WiFi.RSSI()));
-    Serial.println("Device Id : "+String(ESP.getEfuseMac()));
-    ledManager->setLed(String(hexColor.c_str()));
+    Serial.println(hexColor);
+    //...
 
+    //tout mettre dans RGBLedManager...
+    long number;
+    if(hexColor[0] == '#')  number = strtol(&hexColor[1], nullptr, 16);
+    else number = strtol(&hexColor[0], nullptr, 16);
+    red = number >> 16;
+    green = number >> 8 & 0xFF;
+    blue = number & 0xFF;
+    analogWrite(redPin, red);
+    analogWrite(greenPin, green);
+    analogWrite(bluePin, blue);
+
+    //---------
     String htmlContentNav = "<html><body><p> >> <a href=\"/\">Page d'accueil</a></p>";
     htmlContentNav += "<p> >> <a href=\"/qualitedelair\">Page Qualite de l'air</a></p>";
     htmlContentNav += "<p> >> <a href=\"/informationdelappareil\">Page Information de l'appareil</a></p>";
