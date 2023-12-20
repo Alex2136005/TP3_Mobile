@@ -42,11 +42,11 @@ String RevolvairAPI::getJSONFromURL(const string url) const
 void RevolvairAPI::sendPM25Data(String value)
 {
   DynamicJsonDocument doc(1024);
-  doc['esp8266id'] = WifiManager::getUniqueId();
+  doc["esp8266id"] = WifiManager::getUniqueId();
   doc["PMS_P2"]  = value;
   doc["signal"]   = WifiManager::getWifiRSSI();
   String jsonPm25Package = "";
   serializeJson(doc, jsonPm25Package);
   Serial.println(jsonPm25Package);
-  //postJSON(jsonPm25Package);  
+  postJSON(jsonPm25Package);  
 }
