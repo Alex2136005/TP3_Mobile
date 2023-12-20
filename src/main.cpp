@@ -3,10 +3,11 @@
 #include "../lib/RevolvairWebServer/src/revolvairWebServer.h"
 #include <PMS.h>
 #include "PMSReader.h"
+#include <WifiManager.h>
 PMS pms(Serial2);
 PMS::DATA data;
 
-WifiManager* wifiManager = nullptr;
+WifiController* wifiManager = nullptr;
 RevolvairWebServer* webServer = nullptr;
 PMSReader* pmsReader = nullptr;
 RevolvairAPI* api = nullptr;
@@ -18,15 +19,26 @@ const long dataSendingDelay = 10000;
 uint16_t lastScanResult = 0;
 
 void setup() {  
-
+  //WiFiManager TEST
+  /*WiFi.mode(WIFI_STA);
+  WifiController wm;
+  vm.resetSettings();
+  bool res;
+  res = wm.autoConnect("AutoConnectAP", "password");
+  if(!res) {
+    Serial.println("Failed to connect");
+  }
+  else {
+    Serial.println("connected...yeey :)");
+  }*/
+  //------
   const char* ssid = config::WIFI_NAME;
   const char* password = config::WIFI_PASSWORD;
-  
   Serial.begin(115200);
   Serial2.begin(9600);
 
     pmsReader = new PMSReader(pms);
-    wifiManager = new WifiManager(ssid, password);
+    wifiManager = new WifiController(ssid, password);
     webServer = new RevolvairWebServer(new WebServer(80));
     api = new RevolvairAPI();
     wifiManager->initializeConnexion();
@@ -66,7 +78,6 @@ void loop()
     api->sendPM25Data(String(data.PM_AE_UG_1_0), String(data.PM_AE_UG_10_0), String(data.PM_AE_UG_2_5));
     lastDataSendingMillis = currentMillis;
   }
-
 
   delay(2);
 }

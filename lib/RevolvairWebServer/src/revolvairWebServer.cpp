@@ -73,10 +73,10 @@ String RevolvairWebServer::updateHtmlContentPage2()
     try 
     {
         String htmlContentPage2 = fileReader->getFileByName("deviceInfo.html");
-        htmlContentPage2.replace("%MAC_ADDRESS%", WifiManager::getMacAddress());
-        htmlContentPage2.replace("%DEVICE_ID%", WifiManager::getUniqueId());
-        htmlContentPage2.replace("%WIFI_SSID%",  WifiManager::getSSID());
-        htmlContentPage2.replace("%WIFI_RSSI%",  WifiManager::getWifiRSSI());
+        htmlContentPage2.replace("%MAC_ADDRESS%", WifiController::getMacAddress());
+        htmlContentPage2.replace("%DEVICE_ID%", WifiController::getUniqueId());
+        htmlContentPage2.replace("%WIFI_SSID%",  WifiController::getSSID());
+        htmlContentPage2.replace("%WIFI_RSSI%",  WifiController::getWifiRSSI());
         return htmlContentPage2;
 
     } catch (const std::runtime_error& e) 

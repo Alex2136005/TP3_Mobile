@@ -3,7 +3,7 @@
 #include <WiFiClient.h>
 #include <HTTPClient.h>
 #include "../../../src/config.h"
-#include "../../WifiManager/src/wifiManager.h"
+#include "../../wifiController/src/wifiController.h"
 class RevolvairAPI
 {
     private:

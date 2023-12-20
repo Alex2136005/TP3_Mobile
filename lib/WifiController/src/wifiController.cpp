@@ -1,28 +1,28 @@
-#include "wifiManager.h"
-WifiManager::WifiManager(const char* STA_SSID, const char* STA_PW){  
+#include "wifiController.h"
+WifiController::WifiController(const char* STA_SSID, const char* STA_PW){  
     this->SSID = STA_SSID;
     this->PASSWORD = STA_PW;
 };
 
 
-String WifiManager::getMacAddress() 
+String WifiController::getMacAddress() 
 {
     return WiFi.macAddress();
 }
-String WifiManager::getUniqueId()
+String WifiController::getUniqueId()
 {
     return String(ESP.getEfuseMac());
 }
-String WifiManager::getWifiRSSI()
+String WifiController::getWifiRSSI()
 {
     return String(WiFi.RSSI());
 }
-String WifiManager::getSSID()
+String WifiController::getSSID()
 {
     return String(WiFi.SSID());
 }
 
-void WifiManager::initializeConnexion()
+void WifiController::initializeConnexion()
 {
     WiFi.mode(WIFI_STA);
     long lastAttemptDelay = 0;
@@ -53,6 +53,6 @@ void WifiManager::initializeConnexion()
     }
 }
 
-bool WifiManager::isConnected() const{
+bool WifiController::isConnected() const{
     return WiFi.status() == WL_CONNECTED;
 }

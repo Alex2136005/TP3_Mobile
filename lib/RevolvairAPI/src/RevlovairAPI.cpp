@@ -53,7 +53,7 @@ void RevolvairAPI::sendPM25Data(String valueP1, String valueP10, String valueP2_
     doc["sensordatavalues"][2]["value_type"] = "PMS_P2"; 
     doc["sensordatavalues"][2]["value"] = valueP2_5 ;
     doc["sensordatavalues"][2]["value_type"] = "signal"; 
-    doc["sensordatavalues"][2]["value"] = WifiManager::getWifiRSSI(); 
+    doc["sensordatavalues"][2]["value"] = WifiController::getWifiRSSI(); 
     String jsonPm25Package = "";
     serializeJson(doc, jsonPm25Package);
     Serial.println(jsonPm25Package);
