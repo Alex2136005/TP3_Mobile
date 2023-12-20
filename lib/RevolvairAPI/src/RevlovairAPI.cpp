@@ -8,7 +8,7 @@ String RevolvairAPI::getJSONFromURL(const string url) const
     http.begin(String(url.c_str()));
     http.addHeader("Accept", "application/json");
     http.addHeader("Content-Type", "application/json");
-    http.setTimeout(5000);
+    http.setTimeout(10000);
     int httpCode = http.GET();
     String payload = http.getString();
     http.end();
