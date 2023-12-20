@@ -53,7 +53,9 @@ void loop()
       webServer->setPM25(data.PM_AE_UG_2_5);
       lastScanResult = scanResult;
       previousMillis = currentMillis;
-      Serial.println("PM 2.5 (ug/m3):" + String(data.PM_AE_UG_2_5) ); 
+      Serial.println("PM 1 (μg/m3):" + String(data.PM_SP_UG_1_0) );
+      Serial.println("PM 2.5 (μg/m3):" + String(data.PM_AE_UG_2_5) ); 
+      Serial.println("PM 10 (μg/m3):" + String(data.PM_AE_UG_10_0) );
     }
   }
 

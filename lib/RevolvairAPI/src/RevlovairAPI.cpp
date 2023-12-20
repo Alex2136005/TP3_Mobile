@@ -35,6 +35,8 @@ String RevolvairAPI::getJSONFromURL(const string url) const
         Serial.println("HTTP Code: " + String(httpCode));
     }
 
+    Serial.println(payload);
+    
     return payload;
 }
 

@@ -12,5 +12,4 @@ class RevolvairAPI
         RevolvairAPI();
         void sendPM25Data(String value);
         String getJSONFromURL(const string url) const;
-
 };
