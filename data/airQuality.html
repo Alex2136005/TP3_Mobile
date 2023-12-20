@@ -6,22 +6,19 @@
     <title>Qualite de l'air</title>
 </head>
 <body>
-    <h1>Page Qualite de l'air</h1>
-    <p id="pm25Value">PM 2.5 : %PM_2_5% μg/m³</p>
-    <p id="niveau">Niveau : %NIVEAU%</p>
-    <p id="description">Description : %DESCRIPTION%</p>
-    <p id="hexColor">Couleur : %HEX_COLOR%</p>
+    <div id="pageContent">
+        <h1>Page Qualite de l'air</h1>
+        <p id="pm25Value">PM 2.5 : %PM_2_5% μg/m³</p>
+        <p id="niveau">Niveau : %NIVEAU%</p>
+        <p id="description">Description : %DESCRIPTION%</p>
+        <p id="hexColor">Couleur : %HEX_COLOR%</p>
+    </div>
     <script>
         function updateContent() {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    document.getElementById("pm25Value").innerText = "PM 2.5 : " + response.pm_2_5;
-                    document.getElementById("niveau").innerText = "Niveau : " + response.niveau;
-                    document.getElementById("description").innerText = "Description : " + response.description;
-                    document.getElementById("hexColor").innerText = "Couleur : " + response.hexColor;
-                    document.getElementById("hexColor").style.color = response.hexColor;
+                    document.getElementById("pageContent").innerHTML = xhr.responseText;
                 }
             };
             xhr.open("GET", "/qualitedelair", true);

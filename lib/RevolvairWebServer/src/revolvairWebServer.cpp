@@ -82,24 +82,8 @@ String RevolvairWebServer::updateHtmlContentPage2()
     return "<html> Une erreur est survenue. </html>";
 }
 
-void RevolvairWebServer::handleUpdateRequest() {
-    String jsonResponse = "{";
-    jsonResponse += "\"pm_2_5\":\"" + this->aqhiScale->getLastScanResult() + "\",";
-    jsonResponse += "\"niveau\":\"" + this->aqhiScale->getLevel() + "\",";
-    jsonResponse += "\"description\":\"" +  this->aqhiScale->getDescription() + "\",";
-    jsonResponse += "\"hexColor\":\"" +  this->aqhiScale->getHexColor() + "\"";
-    jsonResponse += "}";
-
-    server->sendHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-    server->sendHeader("Pragma", "no-cache");
-    server->sendHeader("Expires", "0");
-
-    server->send(200, "application/json", jsonResponse);
-}
-
 void RevolvairWebServer::initializeServer()
 {
-
     Serial.println("Mac ID : "+String(WiFi.macAddress()));
     Serial.println("Wifi SSID : "+String(WiFi.SSID()));
     Serial.println("Wifi RSSI : "+String(WiFi.RSSI()));
@@ -115,7 +99,6 @@ void RevolvairWebServer::initializeServer()
 
     server->on("/", handleRoot);
     server->on("/qualitedelair", HTTP_GET, [this, htmlContentNav](){
-        handleUpdateRequest();
         server->send(200, "text/html", htmlContentNav + updateHtmlContentPage1());
     });
      server->on("/informationdelappareil", HTTP_GET, [this, htmlContentNav](){

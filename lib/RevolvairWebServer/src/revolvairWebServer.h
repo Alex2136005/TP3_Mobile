@@ -21,5 +21,4 @@ class RevolvairWebServer{
     static void handleNotFound();
     String updateHtmlContentPage1();
     String updateHtmlContentPage2();
-    void handleUpdateRequest();
 };
