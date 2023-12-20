@@ -96,14 +96,7 @@ String RevolvairWebServer::updateHtmlContentPage2()
 
 void RevolvairWebServer::initializeServer()
 {
-    HTTPClient http;
-    http.begin("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
-    http.addHeader("Accept", "application/json");
-    http.addHeader("Content-Type", "application/json");
-    http.setTimeout(5000);
-    int httpCode = http.GET();
-    String payload = http.getString();
-    http.end();
+    String payload = api->getJSONFromURL("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
 
     DeserializationError error = deserializeJson(doc, payload);
     if (error) {

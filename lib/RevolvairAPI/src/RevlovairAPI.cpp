@@ -11,8 +11,7 @@ void RevolvairAPI::postJSON(String& encodedJSON)
     http.addHeader("Authorization", "Bearer " + String(config::API_TOKEN));
     int httpCode = http.POST(encodedJSON);
     String payload = http.getString();
-    Serial.println(httpCode);
-    Serial.println(payload);
+
     http.end();
 }
 
