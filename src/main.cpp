@@ -50,7 +50,7 @@ void loop()
     uint16_t scanResult = pmsReader->getCurrentAirQualityReading(data);
     if(scanResult != std::numeric_limits<uint16_t>::max())
     {
-      webServer->setPM25(data.PM_AE_UG_2_5);
+      webServer->updateData(data.PM_AE_UG_2_5);
       lastScanResult = scanResult;
       previousMillis = currentMillis;
       Serial.println("PM 1 (μg/m3):" + String(data.PM_SP_UG_1_0) );

@@ -5,7 +5,6 @@ const int greenPin = 13;
 const int bluePin = 14;
 uint8_t red, green, blue;
 RGBLedManager* ledManager = new RGBLedManager(redPin, greenPin, bluePin);
-DynamicJsonDocument RevolvairWebServer::doc(4096);
 
 WebServer* RevolvairWebServer::server = nullptr;
 FlashFileReader* RevolvairWebServer::fileReader = nullptr;
@@ -13,11 +12,8 @@ RevolvairWebServer::RevolvairWebServer(WebServer* webserver)
 {  
     this->fileReader = new FlashFileReader();
     this->server = webserver;
-    this->niveau = "";
-    this->description = "";
-    this->hexColor = "";
+    this->aqhiScale = new AQHIScale();
     Serial2.begin(9600);
-    api = new RevolvairAPI();
 }
 
 void RevolvairWebServer::handleNotFound(){
@@ -55,10 +51,10 @@ String RevolvairWebServer::updateHtmlContentPage1() {
     try 
     {
         String htmlContentPage1 = fileReader->getFileByName("airQuality.html");
-        htmlContentPage1.replace("%PM_2_5%", String(pm_2_5));
-        htmlContentPage1.replace("%NIVEAU%", niveau);
-        htmlContentPage1.replace("%DESCRIPTION%", description);
-        htmlContentPage1.replace("%HEX_COLOR%", hexColor);
+        htmlContentPage1.replace("%PM_2_5%", this->aqhiScale->getLastScanResult());
+        htmlContentPage1.replace("%NIVEAU%", this->aqhiScale->getLevel());
+        htmlContentPage1.replace("%DESCRIPTION%", this->aqhiScale->getDescription());
+        htmlContentPage1.replace("%HEX_COLOR%", this->aqhiScale->getHexColor());
 
         return htmlContentPage1;
     } catch (const std::runtime_error& e) 
@@ -88,10 +84,10 @@ String RevolvairWebServer::updateHtmlContentPage2()
 
 void RevolvairWebServer::handleUpdateRequest() {
     String jsonResponse = "{";
-    jsonResponse += "\"pm_2_5\":\"" + pm_2_5 + "\",";
-    jsonResponse += "\"niveau\":\"" + niveau + "\",";
-    jsonResponse += "\"description\":\"" + description + "\",";
-    jsonResponse += "\"hexColor\":\"" + hexColor + "\"";
+    jsonResponse += "\"pm_2_5\":\"" + this->aqhiScale->getLastScanResult() + "\",";
+    jsonResponse += "\"niveau\":\"" + this->aqhiScale->getLevel() + "\",";
+    jsonResponse += "\"description\":\"" +  this->aqhiScale->getDescription() + "\",";
+    jsonResponse += "\"hexColor\":\"" +  this->aqhiScale->getHexColor() + "\"";
     jsonResponse += "}";
 
     server->sendHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
@@ -103,14 +99,6 @@ void RevolvairWebServer::handleUpdateRequest() {
 
 void RevolvairWebServer::initializeServer()
 {
-    String payload = api->getJSONFromURL("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
-
-    DeserializationError error = deserializeJson(doc, payload);
-    if (error) {
-        Serial.print("Error parsing JSON: ");
-        Serial.println(error.c_str());
-        return;
-    }
 
     Serial.println("Mac ID : "+String(WiFi.macAddress()));
     Serial.println("Wifi SSID : "+String(WiFi.SSID()));
@@ -139,30 +127,8 @@ void RevolvairWebServer::initializeServer()
     Serial.println("HTTP server started");
 }
 
-void RevolvairWebServer::setPM25(uint16_t pm_2_5)
+void RevolvairWebServer::updateData(uint16_t pm_2_5)
 {
-    this->pm_2_5 = String(pm_2_5);
-    updateValues();
-}
-
-void RevolvairWebServer::updateValues()
-{
-    String niveau = "";
-    String description = "";
-    String hexColor = "#ffffff";
-
-    for (int i = 0; i < doc["ranges"].size(); ++i) {
-        if (this->pm_2_5.toInt() < doc["ranges"][i]["max"]) {
-            niveau = doc["ranges"][i]["label"].as<String>();
-            description = doc["ranges"][i]["note"].as<String>();
-            hexColor = doc["ranges"][i]["color"].as<String>();
-            break;
-        }
-    }
-
-    this->niveau = niveau;
-    this->description = description;
-    this->hexColor = hexColor;
-
-    ledManager->setLed(String(hexColor.c_str()));
+    aqhiScale->updateInfos(String(pm_2_5));
+    ledManager->setLed(this->aqhiScale->getHexColor().c_str());
 }
