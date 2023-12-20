@@ -147,7 +147,6 @@ void RevolvairWebServer::setPM25(uint16_t pm_2_5)
 
 void RevolvairWebServer::updateValues()
 {
-    //Change la lumière selon le value de la qualité d'aire (aqhi)
     String niveau = "";
     String description = "";
     String hexColor = "#ffffff";

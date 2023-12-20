@@ -13,7 +13,7 @@ RevolvairAPI* api = nullptr;
 
 unsigned long previousMillis = 0;
 const long airScanDelay = 5000;
-const long dataSendingDelay = 10000;
+const long dataSendingDelay = 120000;
 
 uint16_t lastScanResult = 0;
 
