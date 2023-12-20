@@ -5,7 +5,7 @@ class AQHIScale
 {
 
     public:
-        AQHIScale();
+        AQHIScale(DynamicJsonDocument ranges);
         String getLevel( );
         String getDescription();
         String getHexColor();
@@ -13,8 +13,6 @@ class AQHIScale
         String getLastScanResult();
         void updateInfos(String pm_2_5);
     private:
-        void initialize();
-        bool initialized = false;
         RevolvairAPI* api;
         static DynamicJsonDocument rangeJson;
         String level, description, hexColor, scanResult;

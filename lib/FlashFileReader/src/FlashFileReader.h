@@ -1,11 +1,12 @@
+#ifndef FLASH_FILE_READER_H
+#define FLASH_FILE_READER_H
+
 #include "FS.h"
 #include "SPIFFS.h"
 #include <iostream>
 #include <stdexcept>
 
-
-class FlashFileReader
-{
+class FlashFileReader {
 private:
 
 public:
@@ -14,3 +15,4 @@ public:
     String getFileByName(String name);
 };
 
+#endif 
