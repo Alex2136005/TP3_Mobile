@@ -6,9 +6,13 @@ const int bluePin = 14;
 uint8_t red, green, blue;
 
 WebServer* RevolvairWebServer::server = nullptr;
-RevolvairWebServer::RevolvairWebServer(WebServer* webserver){  
+FlashFileReader* RevolvairWebServer::fileReader = nullptr;
+RevolvairWebServer::RevolvairWebServer(WebServer* webserver)
+{  
+    this->fileReader = new FlashFileReader();
     this->server = webserver;
     Serial2.begin(9600);
+    api = new RevolvairAPI();
 }
 
 void RevolvairWebServer::handleNotFound(){
@@ -31,17 +35,13 @@ void RevolvairWebServer::handleNotFound(){
 
 void RevolvairWebServer::handleRoot(){
     digitalWrite(led, 1);
-    File file = SPIFFS.open("/index.html", "r");
-    if (!file) 
+    try 
     {
-        Serial.println("Le fichier index.html est introuvable.");
-        return ;
+        String htmlContent = fileReader->getFileByName("index.html");
+        server->send(200, "text/html", htmlContent);
+    } catch (const std::runtime_error& e) {
+        Serial.println("Exception: " + String(e.what()));
     }
-
-    String htmlContent = file.readString();
-    
-    server->send(200, "text/html", htmlContent);
-    file.close();
 
     digitalWrite(led, 0);
     pinMode(redPin, OUTPUT);
@@ -50,43 +50,38 @@ void RevolvairWebServer::handleRoot(){
 }
 
 String RevolvairWebServer::updateHtmlContentPage1(String niveau, String description, String hexColor) {
-    File file = SPIFFS.open("/airQuality.html", "r");
-    if (!file) 
+    try 
     {
-        Serial.println("Le fichier airQuality.html est introuvable.");
-        return "<html>Une erreur est survenue avec le fichier demandé.</html>";
-    }
- 
-    String htmlContentPage1 = file.readString();
-    htmlContentPage1.replace("%PM_2_5%", String(pm_2_5));
-    htmlContentPage1.replace("%NIVEAU%", niveau);
-    htmlContentPage1.replace("%DESCRIPTION%", description);
-    htmlContentPage1.replace("%HEX_COLOR%", hexColor);
-    file.close();
+        String htmlContentPage1 = fileReader->getFileByName("airQuality.html");
+        htmlContentPage1.replace("%PM_2_5%", String(pm_2_5));
+        htmlContentPage1.replace("%NIVEAU%", niveau);
+        htmlContentPage1.replace("%DESCRIPTION%", description);
+        htmlContentPage1.replace("%HEX_COLOR%", hexColor);
+        return htmlContentPage1;
 
-    return htmlContentPage1;
+    } catch (const std::runtime_error& e) 
+    {
+        Serial.println("Exception: " + String(e.what()));
+    }
+    return "<html> Une erreur est survenue. </html>";
 }
 
 String RevolvairWebServer::updateHtmlContentPage2() 
 {
-    byte mac[6];
-    WiFi.macAddress(mac);
-    String uniqueId =  String(mac[0],HEX) +String(mac[1],HEX) +String(mac[2],HEX) +String(mac[3],HEX) + String(mac[4],HEX) + String(mac[5],HEX);
-    File file = SPIFFS.open("/deviceInfo.html", "r");
-    if (!file) 
+    try 
     {
-        Serial.println("Le fichier deviceInfo.html est introuvable.");
-        return "<html>Une erreur est survenue avec le fichier demandé.</html>";
+        String htmlContentPage2 = fileReader->getFileByName("deviceInfo.html");
+        htmlContentPage2.replace("%MAC_ADDRESS%", WifiManager::getMacAddress());
+        htmlContentPage2.replace("%DEVICE_ID%", WifiManager::getUniqueId());
+        htmlContentPage2.replace("%WIFI_SSID%",  WifiManager::getSSID());
+        htmlContentPage2.replace("%WIFI_RSSI%",  WifiManager::getWifiRSSI());
+        return htmlContentPage2;
+
+    } catch (const std::runtime_error& e) 
+    {
+        Serial.println("Exception: " + String(e.what()));
     }
-
-    String htmlContentPage2 = file.readString();
-    file.close();
-    htmlContentPage2.replace("%MAC_ADDRESS%", WiFi.macAddress());
-    htmlContentPage2.replace("%DEVICE_ID%", uniqueId);
-    htmlContentPage2.replace("%WIFI_SSID%", WiFi.SSID());
-    htmlContentPage2.replace("%WIFI_RSSI%", String(WiFi.RSSI()));
-
-    return htmlContentPage2;   
+    return "<html> Une erreur est survenue. </html>";
 }
 
 
@@ -138,14 +133,13 @@ void RevolvairWebServer::initializeServer()
     analogWrite(greenPin, green);
     analogWrite(bluePin, blue);
 
-    File file = SPIFFS.open("/navbar.html", "r");
-    if (!file) 
-    {
-        Serial.println("Le fichier navbar.html est introuvable.");
-        return ;
+    String htmlContentNav = "<html>NavBar</html>";
+    try
+    { 
+        htmlContentNav = fileReader->getFileByName("navbar.html");
+    } catch (const std::runtime_error& e) {
+      Serial.println("Exception: " + String(e.what()));
     }
-
-    String htmlContentNav = file.readString();
 
     server->on("/", handleRoot);
     server->on("/qualitedelair", HTTP_GET, [this, htmlContentNav, niveau, description, hexColor](){
