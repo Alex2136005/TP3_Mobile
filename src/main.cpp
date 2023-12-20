@@ -12,7 +12,7 @@ PMSReader* pmsReader = nullptr;
 RevolvairAPI* api = nullptr;
 
 unsigned long previousMillis = 0;
-const long airScanDelay = 1000;
+const long airScanDelay = 5000;
 const long dataSendingDelay = 10000;
 
 uint16_t lastScanResult = 0;
