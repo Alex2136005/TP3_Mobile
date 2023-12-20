@@ -63,7 +63,7 @@ void loop()
    if (currentMillis - lastDataSendingMillis >= dataSendingDelay) 
    {
     Serial.println("Sending data to API");
-    api->sendPM25Data(String(lastScanResult));
+    api->sendPM25Data(String(data.PM_AE_UG_1_0), String(data.PM_AE_UG_10_0), String(data.PM_AE_UG_2_5));
     lastDataSendingMillis = currentMillis;
   }
 
