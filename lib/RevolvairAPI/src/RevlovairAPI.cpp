@@ -2,7 +2,6 @@
 
 RevolvairAPI::RevolvairAPI(){}
 
-
 String RevolvairAPI::getJSONFromURL(const string url) const 
 {
     HTTPClient http;
