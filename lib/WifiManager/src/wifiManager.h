@@ -7,6 +7,10 @@ class WifiManager
         WifiManager( const char* STA_SSID, const char* STA_PW);
         bool isConnected() const;
         void initializeConnexion();
+        static String getMacAddress();
+        static String getWifiRSSI();
+        static String getSSID();
+        static String getUniqueId();
     private:
         const int led = 13;
         const char* SSID ;
