@@ -5,7 +5,7 @@
 class WifiController
 {
     public:
-        WifiController( const char* STA_SSID, const char* STA_PW);
+        WifiController( /*const char* STA_SSID, const char* STA_PW*/);
         bool isConnected() const;
         void initializeConnexion();
         static String getMacAddress();
@@ -14,8 +14,8 @@ class WifiController
         static String getUniqueId();
     private:
         const int led = 13;
-        const char* SSID ;
-        const char* PASSWORD;
+        //const char* SSID ;
+        //const char* PASSWORD;
         const float WIFI_CONNEXION_ATTEMPT_DELAY = 10000;
 
 };

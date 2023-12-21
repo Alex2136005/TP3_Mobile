@@ -18,13 +18,13 @@ const long dataSendingDelay = 120000;
 uint16_t lastScanResult = 0;
 
 void setup() {  
-  const char* ssid = config::WIFI_NAME;
-  const char* password = config::WIFI_PASSWORD;
+  //const char* ssid = config::WIFI_NAME;
+  //const char* password = config::WIFI_PASSWORD;
   Serial.begin(115200);
   Serial2.begin(9600);
 
   pmsReader = new PMSReader(pms);
-  wifiManager = new WifiController(ssid, password);
+  wifiManager = new WifiController(/*ssid, password*/);
   webServer = new RevolvairWebServer(new WebServer(80));
   api = new RevolvairAPI();
   wifiManager->initializeConnexion();
