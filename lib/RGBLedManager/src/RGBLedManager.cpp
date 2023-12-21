@@ -1,6 +1,6 @@
 #include "RGBLedManager.h"
 
-RGBLedManager::RGBLedManager(int redPin, int greenPin, int bluePin){  
+RGBLedManager::RGBLedManager(uint8_t redPin, uint8_t greenPin, uint8_t bluePin){  
     this->redPin = redPin;
     this->greenPin = greenPin;
     this->bluePin = bluePin;

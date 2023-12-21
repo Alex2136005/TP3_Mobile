@@ -1,5 +1,4 @@
 #include "wifiController.h"
-//#include <WiFiManager.h>
 
 WifiController::WifiController(const char* STA_SSID, const char* STA_PW){  
     this->SSID = STA_SSID;
@@ -30,8 +29,8 @@ void WifiController::initializeConnexion()
 
     while (WiFi.status() != WL_CONNECTED) 
     {
-        /*WiFiManager wm;
-        //Enlevé la lign en production
+        WiFiManager wm;
+        //Enlevé la ligne en production
         wm.resetSettings();
         bool res;
         res = wm.autoConnect("AutoConnectAP","password");
@@ -39,8 +38,7 @@ void WifiController::initializeConnexion()
             Serial.println("Failed to connect");
             // ESP.restart();
         } 
-*/
-        WiFi.begin(this->SSID, this->PASSWORD);
+        //WiFi.begin(this->SSID, this->PASSWORD);
         Serial.println();
         while (WiFi.status() != WL_CONNECTED) 
         {

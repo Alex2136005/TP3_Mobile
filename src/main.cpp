@@ -23,12 +23,12 @@ void setup() {
   Serial.begin(115200);
   Serial2.begin(9600);
 
-    pmsReader = new PMSReader(pms);
-    wifiManager = new WifiController(ssid, password);
-    webServer = new RevolvairWebServer(new WebServer(80));
-    api = new RevolvairAPI();
-    wifiManager->initializeConnexion();
-    webServer->initializeServer();
+  pmsReader = new PMSReader(pms);
+  wifiManager = new WifiController(ssid, password);
+  webServer = new RevolvairWebServer(new WebServer(80));
+  api = new RevolvairAPI();
+  wifiManager->initializeConnexion();
+  webServer->initializeServer();
 }
 
 

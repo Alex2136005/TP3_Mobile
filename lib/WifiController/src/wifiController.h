@@ -1,6 +1,7 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <ESPmDNS.h>
+#include <WiFiManager.h>
 class WifiController
 {
     public:
