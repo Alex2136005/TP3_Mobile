@@ -14,9 +14,9 @@ RGBLedManager::RGBLedManager(){  }
 
 void RGBLedManager::setLed(RGBColor color) 
 {
-    analogWrite(12, color.red);
-    analogWrite(13, color.green);
-    analogWrite(14, color.blue);	
+    analogWrite(redPin, color.red);
+    analogWrite(greenPin, color.green);
+    analogWrite(bluePin, color.blue);	
 }
 
 RGBColor RGBLedManager::getRGBColorFromHex(String hexColor) 
