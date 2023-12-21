@@ -10,13 +10,12 @@ class RGBLedManager
 public:
     RGBLedManager(int redPin, int greenPin, int bluePin);
     RGBLedManager();
-    void setLed(String hexColor);
-    RGBColor getRGBColorFromHex(String hexColor);
+    void setLed(RGBColor color);
+    RGBColor getRGBColorFromHex(String color);
 
 private:
     int redPin;
     int greenPin;
     int bluePin;
 };
-
 #endif 

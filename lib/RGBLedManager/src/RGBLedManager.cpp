@@ -12,26 +12,41 @@ RGBLedManager::RGBLedManager(int redPin, int greenPin, int bluePin)
 RGBLedManager::RGBLedManager(){  }
 
 
-void RGBLedManager::setLed(String hexColor) 
+void RGBLedManager::setLed(RGBColor color) 
 {
-    RGBColor color = getRGBColorFromHex(hexColor);
-    
-    analogWrite(redPin, color.red);
-    analogWrite(greenPin, color.green);
-    analogWrite(bluePin, color.blue);	
+    analogWrite(12, color.red);
+    analogWrite(13, color.green);
+    analogWrite(14, color.blue);	
 }
 
-RGBColor RGBLedManager::getRGBColorFromHex(String hexColor)
+RGBColor RGBLedManager::getRGBColorFromHex(String hexColor) 
 {
     uint8_t red, green, blue;
     long number;
-    if(hexColor[0] == '#')  number = strtol(&hexColor[1], nullptr, 16);
-    else number = strtol(&hexColor[0], nullptr, 16);
-    red = number >> 16;
-    green = number >> 8 & 0xFF;
+
+    if (hexColor.length() < 6)
+    {
+        Serial.println("Invalid hex color format");
+        return {0, 0, 0};
+    }
+
+    if (hexColor[0] == '#')  
+        hexColor = hexColor.substring(1);
+
+    number = strtol(hexColor.c_str(), nullptr, 16);
+
+    red = (number >> 16) & 0xFF;
+    if (red > 255) red = 255;
+
+    green = (number >> 8) & 0xFF;
+    if (green > 255) green = 255;
+
     blue = number & 0xFF;
+    if (blue > 255) blue = 255;
 
     RGBColor color = {red, green, blue};
     return color;
 }
+
+
 

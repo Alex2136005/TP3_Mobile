@@ -13,12 +13,13 @@ public:
     static WebServer* server;
     static FlashFileReader* fileReader;
     RevolvairWebServer(WebServer* webserver);
+    RevolvairWebServer(EPAScale& scale); //pour les tests
     ~RevolvairWebServer();
     void initializeServer();
     void updateData(uint16_t pm_2_5);
 
 private:
-    EPAScale* aqhiScale;
+    EPAScale* epaScale;
     RevolvairAPI* api;
     static const int led = 13;
     static void handleRoot();
@@ -28,7 +29,7 @@ private:
     void handleUpdateRequest();
 };
 
-#endif // REVOLVAIR_WEBSERVER_H
+#endif
 
 
 

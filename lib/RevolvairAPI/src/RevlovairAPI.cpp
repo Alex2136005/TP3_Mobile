@@ -10,6 +10,7 @@ String RevolvairAPI::getJSONFromURL(const string url) const
     http.addHeader("Content-Type", "application/json");
     http.setTimeout(5000);
     int httpCode = http.GET();
+    Serial.println("HTTP Code: " + String(httpCode));
     String payload = http.getString();
     http.end();
     if (httpCode == HTTP_CODE_OK) {
