@@ -16,6 +16,14 @@ RevolvairWebServer::RevolvairWebServer(WebServer* webserver)
     this->api = new RevolvairAPI();
 }
 
+RevolvairWebServer::RevolvairWebServer(EPAScale& scale)
+{  
+    
+    this->fileReader = new FlashFileReader();
+    this->api = new RevolvairAPI();
+    this->epaScale = &scale;
+}
+
 void RevolvairWebServer::handleNotFound()
 {
     digitalWrite(led, 1);
@@ -52,10 +60,10 @@ String RevolvairWebServer::updateHtmlContentPage1() {
     try 
     {
         String htmlContentPage1 = fileReader->getFileByName("airQuality.html");
-        htmlContentPage1.replace("%PM_2_5%", this->aqhiScale->getLastScanResult());
-        htmlContentPage1.replace("%NIVEAU%", this->aqhiScale->getLevel());
-        htmlContentPage1.replace("%DESCRIPTION%", this->aqhiScale->getDescription());
-        htmlContentPage1.replace("%HEX_COLOR%", this->aqhiScale->getHexColor());
+        htmlContentPage1.replace("%PM_2_5%", this->epaScale->getLastScanResult());
+        htmlContentPage1.replace("%NIVEAU%", this->epaScale->getLevel());
+        htmlContentPage1.replace("%DESCRIPTION%", this->epaScale->getDescription());
+        htmlContentPage1.replace("%HEX_COLOR%", this->epaScale->getHexColor());
 
         return htmlContentPage1;
     } catch (const std::runtime_error& e) 
@@ -87,7 +95,7 @@ void RevolvairWebServer::initializeServer()
 {
 
     DynamicJsonDocument temp(4096);
-    String payload = api->getJSONFromURL("https://staging.revolvair.org/api/revolvair/aqi/aqhi");
+    String payload = api->getJSONFromURL("https://staging.revolvair.org/api/revolvair/aqi/usepa/fr");
     DeserializationError error = deserializeJson(temp, payload);
     if (error) {
         Serial.print("Error parsing JSON: ");
@@ -95,7 +103,12 @@ void RevolvairWebServer::initializeServer()
         return;
     }else
     {
-        this->aqhiScale = new AQHIScale(temp);
+        String jsonString;
+        serializeJson(temp, jsonString);
+
+        // Print the string
+        Serial.println(jsonString);
+        this->epaScale = new EPAScale(temp);
         Serial2.begin(9600);
     }
 
@@ -127,6 +140,6 @@ void RevolvairWebServer::initializeServer()
 
 void RevolvairWebServer::updateData(uint16_t pm_2_5)
 {
-    aqhiScale->updateInfos(String(pm_2_5));
-    ledManager->setLed(this->aqhiScale->getHexColor().c_str());
+    epaScale->updateInfos(String(pm_2_5));
+    ledManager->setLed(this->epaScale->getRGBColorFromPM25(pm_2_5));
 }
