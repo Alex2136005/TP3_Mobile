@@ -1,8 +1,0 @@
-Noms des développeurs :
-    Alexis Chantigny et Mathys Deshaies
-Lien vers le projet GitLab :
-    https://github.com/Alex2136005/TP3_Mobile
-Lien vers la page Web des données de la station :
-
-Bogues connus:
-    Aucun

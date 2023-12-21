@@ -5,17 +5,20 @@
 #include <string>
 #include "RGBColor.h"
 
+using namespace std;
+
 class RGBLedManager
 {
 public:
-    RGBLedManager(int redPin, int greenPin, int bluePin);
+    RGBLedManager(uint8_t redPin, uint8_t greenPin, uint8_t bluePin);
     RGBLedManager();
     void setLed(RGBColor color);
     RGBColor getRGBColorFromHex(String color);
 
 private:
-    int redPin;
-    int greenPin;
-    int bluePin;
+    uint8_t redPin;
+    uint8_t greenPin;
+    uint8_t bluePin;
+    uint8_t red, green, blue;
 };
 #endif 

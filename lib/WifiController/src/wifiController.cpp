@@ -1,9 +1,9 @@
 #include "wifiController.h"
-WifiController::WifiController(const char* STA_SSID, const char* STA_PW){  
-    this->SSID = STA_SSID;
-    this->PASSWORD = STA_PW;
-};
 
+WifiController::WifiController(/*const char* STA_SSID, const char* STA_PW*/){  
+    //this->SSID = STA_SSID;
+    //this->PASSWORD = STA_PW;
+};
 
 String WifiController::getMacAddress() 
 {
@@ -29,7 +29,15 @@ void WifiController::initializeConnexion()
 
     while (WiFi.status() != WL_CONNECTED) 
     {
-        WiFi.begin(this->SSID, this->PASSWORD);
+        WiFiManager wm;
+        //Enlevé la ligne en production
+        wm.resetSettings();
+        bool res;
+        res = wm.autoConnect("AutoConnectAP","password");
+        if(!res) {
+            Serial.println("Failed to connect");
+        } 
+        //WiFi.begin(this->SSID, this->PASSWORD);
         Serial.println();
         while (WiFi.status() != WL_CONNECTED) 
         {
@@ -45,7 +53,7 @@ void WifiController::initializeConnexion()
     
     Serial.println("");
     Serial.print("Connected to ");
-    Serial.println(this->SSID);
+    Serial.println(this->getSSID());
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
     if (MDNS.begin("esp32")) {

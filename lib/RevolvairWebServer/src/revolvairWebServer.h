@@ -28,8 +28,5 @@ private:
     String updateHtmlContentPage2();
     void handleUpdateRequest();
 };
-
 #endif
-
-
 
