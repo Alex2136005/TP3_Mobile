@@ -32,6 +32,7 @@ void RevolvairAPI::postJSON(String& encodedJSON)
     http.addHeader("x-mac-id", "esp32-083AF2B914C0");
     http.addHeader("x-device-id", "211195251538440");
     int httpCode = http.POST(encodedJSON);
+    Serial.println("HTTP Code: " + httpCode);
     String payload = http.getString();
     http.end();
 }
