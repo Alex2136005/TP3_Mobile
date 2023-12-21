@@ -95,7 +95,7 @@ void RevolvairWebServer::initializeServer()
         return;
     }else
     {
-        this->aqhiScale = new AQHIScale(temp);
+        this->aqhiScale = new EPAScale(temp);
         Serial2.begin(9600);
     }
 

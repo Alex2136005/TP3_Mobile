@@ -1,7 +1,7 @@
-#include "AQHIScale.h"
+#include "EPAScale.h"
 
-DynamicJsonDocument AQHIScale::rangeJson(4096);
-AQHIScale::AQHIScale(DynamicJsonDocument ranges)
+DynamicJsonDocument EPAScale::rangeJson(4096);
+EPAScale::EPAScale(DynamicJsonDocument ranges)
 {
     String jsonString;
     serializeJson(ranges, jsonString);
@@ -13,7 +13,7 @@ AQHIScale::AQHIScale(DynamicJsonDocument ranges)
     this->hexColor = "";
 }
 
-void AQHIScale::updateInfos(String pm_2_5)
+void EPAScale::updateInfos(String pm_2_5)
 {
     this->scanResult = String(pm_2_5);
     for (int i = 0; i < rangeJson["ranges"].size(); ++i)
@@ -27,10 +27,10 @@ void AQHIScale::updateInfos(String pm_2_5)
         }
     }
 }
-String AQHIScale::getLastScanResult(){
+String EPAScale::getLastScanResult(){
     return this->scanResult;
 }
-String AQHIScale::getAqiEpaLabelFromPM25(uint16_t pm_2_5)
+String EPAScale::getLabelFromPM25(uint16_t pm_2_5)
 {
 
     for (int i = 0; i < rangeJson["ranges"].size(); ++i)
@@ -40,15 +40,29 @@ String AQHIScale::getAqiEpaLabelFromPM25(uint16_t pm_2_5)
             return rangeJson["ranges"][i]["label"].as<String>();
         }
     }
-    return "No label foud for this value.";
+    return "No label found for this value.";
 }
-String AQHIScale::getLevel(){
+
+RGBColor EPAScale::getRGBColorFromPM25(uint16_t pm_2_5)
+{
+    RGBColor color  = {0,0,0};
+
+    for (int i = 0; i < rangeJson["ranges"].size(); ++i)
+    {
+        if (String(pm_2_5).toInt() < rangeJson["ranges"][i]["max"]) 
+        {
+            return RGBLedManager().getRGBColorFromHex(rangeJson["ranges"][i]["color"].as<String>());
+        }
+    }
+    return color;
+}
+String EPAScale::getLevel(){
     return this->level;
 }
-String AQHIScale::getDescription(){
+String EPAScale::getDescription(){
     return this->description;
 }
-String AQHIScale::getHexColor(){
+String EPAScale::getHexColor(){
     return this->hexColor;
 }
 

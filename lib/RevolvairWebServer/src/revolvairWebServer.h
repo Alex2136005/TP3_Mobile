@@ -3,7 +3,7 @@
 
 #include <WebServer.h>
 #include <ESPmDNS.h>
-#include "../../AQHIScale/src/AQHIScale.h"
+#include "../../EPAScale/src/EPAScale.h"
 #include "FlashFileReader.h"
 #include <HTTPClient.h>
 #include "../../RGBLedManager/src/RGBLedManager.h"
@@ -18,7 +18,7 @@ public:
     void updateData(uint16_t pm_2_5);
 
 private:
-    AQHIScale* aqhiScale;
+    EPAScale* aqhiScale;
     RevolvairAPI* api;
     static const int led = 13;
     static void handleRoot();
@@ -30,5 +30,5 @@ private:
 
 #endif // REVOLVAIR_WEBSERVER_H
 
-};
+
 

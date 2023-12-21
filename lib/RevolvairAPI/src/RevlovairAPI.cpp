@@ -32,8 +32,6 @@ void RevolvairAPI::postJSON(String& encodedJSON)
     http.addHeader("x-device-id", "211195251538440");
     int httpCode = http.POST(encodedJSON);
     String payload = http.getString();
-    Serial.println(httpCode);
-    Serial.println(payload);
     http.end();
 }
 
@@ -52,6 +50,5 @@ void RevolvairAPI::sendPM25Data(String valueP1, String valueP10, String valueP2_
     doc["sensordatavalues"][2]["value"] = WifiController::getWifiRSSI(); 
     String jsonPm25Package = "";
     serializeJson(doc, jsonPm25Package);
-    Serial.println(jsonPm25Package);
     postJSON(jsonPm25Package);  
 }
